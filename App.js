@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 
 let timer = null;
@@ -12,6 +13,19 @@ export default function App() {
   const [numero, setNumero] = useState(0);
   const [botao, seBotao] = useState('VAI');
   const [ultimo, setUltimo] = useState(null);
+  const [color, setColor] = useState('#00aeef')
+  const [selectColor, setSeletcColor] = useState ([
+    { key: 1, valor: "#00aeef",  nome:"Azul" },
+    { key: 2, valor: "#C3C3C3", nome:"Cinza" },
+    { key: 3, valor: "#FE641C", nome:"Laranja" },
+    { key: 4, valor: "#9200FE", nome:"Roxo" },
+    { key: 5, valor: "#1F8900", nome:"Verde" },
+    { key: 6, valor: "#E50000", nome:"Vermelho" },
+  ])
+
+  let colorsItem = selectColor.map((item, key) =>{
+    return <Picker.Item key={key} value={item.valor} label={item.nome} />
+  })
 
 
   function vai() {
@@ -34,47 +48,56 @@ export default function App() {
           hh++;
         }
 
-        if(hh === 24) {
-          hh =0;
+        if (hh === 24) {
+          hh = 0;
         }
-        let format = 
-        (hh < 10 ? '0' + hh : hh) + ' : ' +
-        (mm < 10 ? '0' + mm : mm) + ' : ' +
-        (ss < 10 ? '0' + ss : ss) 
+        let format =
+          (hh < 10 ? '0' + hh : hh) + ' : ' +
+          (mm < 10 ? '0' + mm : mm) + ' : ' +
+          (ss < 10 ? '0' + ss : ss)
 
         setNumero(format)
-      }, 1000); 
-      
+      }, 1000);
+
       seBotao('PARAR');
 
     }
   }
 
   function limpar() {
-      if(timer !== null){
-        clearInterval(timer);
-        timer = null;
-      }
-      setUltimo(numero)
-      setNumero(0);
-      ss = 0;
-      mm = 0;
-      hh = 0;
-      seBotao('VAI')
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+    }
+    setUltimo(numero)
+    setNumero(0);
+    ss = 0;
+    mm = 0;
+    hh = 0;
+    seBotao('VAI')
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor: color}]}>
+      <View style={[styles.containerSelectColor, {backgroundColor: color}]}>
+        <Text style={styles.textContainerSelect}>Cor de fundo </Text>
+        <Picker
+          selectedValue={color}
+          onValueChange={(itemValue, itemIndex) => setColor(itemValue)}
+        >
+         {colorsItem}
+        </Picker>
+      </View>
       <Image
-        source={require('./src/images/crono.png')}
+        source={require('./src/images/crono.png')} 
       />
-      <Text style={styles.timer}>{numero === 0? '00 : 00 : 00' : numero}</Text>
+      <Text style={styles.timer}>{numero === 0 ? '00 : 00 : 00' : numero}</Text>
       <View style={styles.btnArea}>
         <TouchableOpacity style={styles.btn} onPress={vai}>
-          <Text style={styles.btnTexto}>{botao}</Text>
+          <Text style={[styles.btnTexto, {color: color}]}>{botao}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btn} onPress={limpar}>
-          <Text style={styles.btnTexto}>LIMPAR</Text>
+          <Text style={[styles.btnTexto, {color: color}]}>LIMPAR</Text>
         </TouchableOpacity>
       </View>
 
@@ -134,5 +157,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontStyle: 'italic',
   },
+
+  containerSelectColor:{
+    marginBottom: 60,
+    backgroundColor: '#00aeef',
+    padding: 5,
+    width: '50%'
+  },
+
+  textContainerSelect:{
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold'
+  }
 
 });
